@@ -1,0 +1,44 @@
+# Model arguments
+model_name_or_path: Noromaid-20b-v0.1.1/
+model_revision: main
+torch_dtype: bfloat16
+use_flash_attention_2: true
+
+# Data training arguments
+chat_template: "{{messages + eos_token}}"
+dataset_mixer:
+    roleplay4fun/limarp_text: 1.0
+dataset_splits:
+- train
+preprocessing_num_workers: 12
+
+# SFT trainer config
+bf16: true
+do_eval: false
+evaluation_strategy: 'no'
+gradient_accumulation_steps: 4
+gradient_checkpointing: true
+gradient_checkpointing_kwargs:
+  use_reentrant: False
+# hub_model_id: zephyr-7b-sft-full
+# hub_strategy: every_save
+# learning_rate: 5.0e-07
+learning_rate: 1.0e-06
+log_level: info
+logging_steps: 5
+logging_strategy: steps
+lr_scheduler_type: cosine
+max_seq_length: 4096
+max_steps: -1
+num_train_epochs: 1
+output_dir: output/limarp-20b-1e-fft
+overwrite_output_dir: true
+per_device_train_batch_size: 1
+push_to_hub: false
+remove_unused_columns: true
+report_to:
+save_strategy: "steps"
+save_steps: 100
+save_total_limit: 1
+seed: 42
+warmup_ratio: 0.1
