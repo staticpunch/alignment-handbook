@@ -98,13 +98,22 @@ def main():
     #####################
     # Apply chat template
     #####################
-    #raw_datasets = raw_datasets.map(
-    #    apply_chat_template,
-    #    fn_kwargs={"tokenizer": tokenizer, "task": "sft"},
-    #    num_proc=data_args.preprocessing_num_workers,
-    #    remove_columns=column_names,
-    #    desc="Applying chat template",
-    #)
+    def simple_chat_template(example, tokenizer):
+        """
+        Simply add an EOS token
+        """
+        assert tokenizer.chat_template == "{{messages + eos_token}}"
+        text = example["text"]
+        example["text"] = tokenizer.apply_chat_template(text, tokenize=False)
+        return example
+        
+    raw_datasets = raw_datasets.map(
+       simple_chat_template,
+       fn_kwargs={"tokenizer": tokenizer},
+       num_proc=data_args.preprocessing_num_workers,
+       remove_columns=column_names,
+       desc="Applying chat template",
+    )
     train_dataset = raw_datasets["train"]
     eval_dataset = raw_datasets["test"] if "test" in raw_datasets.keys() else None
 
